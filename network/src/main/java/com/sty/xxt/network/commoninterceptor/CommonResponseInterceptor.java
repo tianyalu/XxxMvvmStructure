@@ -7,8 +7,8 @@ import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
-public class CommonResponsetInterceptor implements Interceptor {
-    private static final String TAG = CommonResponsetInterceptor.class.getSimpleName();
+public class CommonResponseInterceptor implements Interceptor {
+    private static final String TAG = CommonResponseInterceptor.class.getSimpleName();
     @Override
     public Response intercept(Chain chain) throws IOException {
         long requestTime = System.currentTimeMillis();

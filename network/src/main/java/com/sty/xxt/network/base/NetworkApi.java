@@ -1,11 +1,9 @@
 package com.sty.xxt.network.base;
 
-import com.sty.xxt.network.beans.TencentBaseResponse;
 import com.sty.xxt.network.commoninterceptor.CommonRequestInterceptor;
-import com.sty.xxt.network.commoninterceptor.CommonResponsetInterceptor;
+import com.sty.xxt.network.commoninterceptor.CommonResponseInterceptor;
 import com.sty.xxt.network.environment.EnvironmentActivity;
 import com.sty.xxt.network.environment.IEnvironment;
-import com.sty.xxt.network.errorhandler.ExceptionHandle;
 import com.sty.xxt.network.errorhandler.HttpErrorHandler;
 
 import java.util.HashMap;
@@ -72,7 +70,7 @@ public abstract class NetworkApi implements IEnvironment {
             int cacheSize = 100 * 1024 * 1024; //10MB
             okHttpClientBuilder.cache(new Cache(iNetworkRequiredInfo.getApplicationContext().getCacheDir(), cacheSize));
             okHttpClientBuilder.addInterceptor(new CommonRequestInterceptor(iNetworkRequiredInfo)); //请求拦截器
-            okHttpClientBuilder.addInterceptor(new CommonResponsetInterceptor()); //返回结果拦截器
+            okHttpClientBuilder.addInterceptor(new CommonResponseInterceptor()); //返回结果拦截器
             if (iNetworkRequiredInfo != null && iNetworkRequiredInfo.isDebug()) {
                 HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
                 httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);

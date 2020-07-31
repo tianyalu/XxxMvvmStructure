@@ -33,8 +33,9 @@ android {
 
 }
 
-//implementation: 完全等同于compile指令，没区别，你将所有的compile改成api，完全没有错
-//api: 这个指令的特点就是，对于使用了该命令编译的依赖，对该项目有依赖的项目将无法访问到使用该命令编译的依赖中的任何程序，也就是将该依赖隐藏在内部，而不对外部公开。
+//implementation: 本地依赖时依赖隔离，编译快；
+//api: 本地依赖时依赖不隔离，但编译慢（模块都需要编译）；
+//远程依赖时两者皆不隔离
 dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.3.0"
     api "com.squareup.retrofit2:converter-gson:2.3.0"

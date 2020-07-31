@@ -16,10 +16,10 @@ public class BaseObserver<T> implements Observer<T> {
     }
     @Override
     public void onError(Throwable e) {
-        if(e instanceof ExceptionHandle.ResponeThrowable){
+        if(e instanceof ExceptionHandle.ResponseThrowable){
             mvvmNetworkObserver.onFailure(e);
         } else {
-            mvvmNetworkObserver.onFailure(new ExceptionHandle.ResponeThrowable(e, ExceptionHandle.ERROR.UNKNOWN));
+            mvvmNetworkObserver.onFailure(new ExceptionHandle.ResponseThrowable(e, ExceptionHandle.ERROR.UNKNOWN));
         }
     }
 

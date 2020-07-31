@@ -120,59 +120,103 @@ distributionUrl=https\://localhost:8081/artifactory/android_local/gradle-5.4.1-a
 
 ## 二、搭建网络模块
 
+本文网络模块是通过`Retrofit + OKHttp + RxJava`实现的。`Retrofit`主要实现注解、动态代理以及请求回调等功能；`OKHttp`作为底层网络请求的实际执行者；`RxJava`主要实现网络请求返回后的各种错误的统一处理。
+
+### 2.1 整体架构
+
 `Retrofit + OKHttp + RxJava` 实现的网络请求流程如下图所示：
 
 ![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/network_request_process.png)
 
 
 
-Okhttp 原理
+### 2.2 `OKHttp` 原理
+
+`OKHttp`有两个运行时队列和一个就绪队列，数据请求流程如下图所示：
 
 ![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/okhttp_theory.png)
 
+### 2.3 `Tips`
 
+#### 2.3.1 `implementation`和`api`
 
-报错：  
+ `Gradle implementation`和`api`的区别如下：
+
+> 1. `implementation`: 本地依赖时依赖隔离，编译快；
+> 2. `api`: 本地依赖时依赖不隔离，但编译慢（模块都需要编译）。
+
+共同点：**远程依赖时两者皆不隔离**。
+
+#### 2.3.2 采坑  
+
+网络模块运行时报错如下：
 
 ```java
 CLEARTEXT communication to service-o5ikp40z-1255468759.ap-shanghai.apigateway.myqcloud.com not permitted by network security policy
 ```
 
-Xml --> network_security_config.xml
+解决步骤：
 
-AndroidManifest.xml --> application:android:networkSecurityConfig="@xml/network_security_config"
+在`res`目录下新建`xml`目录，并新建` network_security_config.xml`文件，内容如下：
 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
+```
 
+修改`AndroidManifest.xml `文件：
 
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.sty.xxt.network" >
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity
+            android:name=".environment.EnvironmentActivity"
+            android:label="@string/network_environment_setting"
+            android:screenOrientation="portrait" />
+    </application>
+</manifest>
+```
 
+## 三、`MVVM`控件化
 
-2. 控件化+Mvvm（m）vm+v
+### 3.1 控件化需要遵循的原则
 
-适配器模式：将数据适配到View
+控件化需要遵循如下原则：
 
-单一职责原则
+> 1. 单一职责原则;
+> 2. 开闭原则（可读 可修改）。
 
-开闭原则
+模块定义原则：
 
-可读 可修改
+> 1. `base`:  高级/架构师 才能修改；
+> 2. `common`: 通用的功能或者`View` 所有人都能改。
 
-base 高级/架构师 才能修改
+架构师职责：
 
-common 通用的功能或者View 所有人都能改
+> 1. 对产品负责，对需求、技术选型负责 `native/flutter/html/hybrid/`小程序 ；
+> 2. 对程序员负责，通过技术管理团队，服务意识，扎实的基本功：设计模式+语言功底 基本功 控件化+四大组件+自定义`View`；
+> 3. 对痛点/难点负责，优化负责，oom/anr/耗电/卡顿 一系列的问题都需要处理。
 
+适配器模式：将数据适配到`View`。
 
+### 3.2 `MVVM`架构
 
-![image-20200720222121879](/Users/tian/Library/Application Support/typora-user-images/image-20200720222121879.png)
+#### 3.2.1 `Model`层
 
-Model需要考虑的问题：  
+`Model`层需要考虑的问题：
 
-![image-20200721093304920](/Users/tian/Library/Application Support/typora-user-images/image-20200721093304920.png)
+![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/model_layer_duty.png)  
 
-架构师：
+#### 3.2.2 整体架构
 
-> 1. 对产品负责，对需求、技术选型负责 native/flutter/html/hybrid/小程序  
-> 2. 对程序员负责，通过技术管理团队，服务意识，扎实的基本功：设计模式+语言功底 基本功 控件化+四大组件+自定义View  
-> 3. 对痛点/难点负责 优化负责  oom/anr/耗电/卡顿 一系列的问题都需要处理
+`MVVM`整体架构如下图所示：
+
+![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/mvvm_structure.png)  
 
 3. 内容优化（启动优化）
 
