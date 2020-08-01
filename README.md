@@ -196,6 +196,8 @@ CLEARTEXT communication to service-o5ikp40z-1255468759.ap-shanghai.apigateway.my
 > 1. `base`:  高级/架构师 才能修改；
 > 2. `common`: 通用的功能或者`View` 所有人都能改。
 
+组件化的难点：迁移、老工程迁移到组件化、历史代码的迁移。
+
 架构师职责：
 
 > 1. 对产品负责，对需求、技术选型负责 `native/flutter/html/hybrid/`小程序 ；
@@ -218,34 +220,77 @@ CLEARTEXT communication to service-o5ikp40z-1255468759.ap-shanghai.apigateway.my
 
 ![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/mvvm_structure.png)  
 
-## 四、项目优化（启动优化）
+分页状态机：
 
-Lifecycle owner model
+![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/paging_status_machine.png)  
 
-Mvvm m vm v 的创建顺序：v-->vm-->m
+本项目采用`loadsir`来用作为`view`的错误处理展示。
 
-数据库：room+paging+livedata<PagingList<D>> 数据库的数据
+> 数据库：`room+paging+livedata<PagingList<D>> `数据库的数据处理。
 
-![image-20200721101327415](/Users/tian/Library/Application Support/typora-user-images/image-20200721101327415.png)
+#### 3.2.3 视图生命周期与`LiveData`
 
-分页状态机
+`MVVM`中`M`、`VM`和`V `的创建顺序：`V`-->`VM`-->`M` 。
 
-![image-20200721101749731](/Users/tian/Library/Application Support/typora-user-images/image-20200721101749731.png)
+`Activity/Fragment`生命周期与`LiveData`的关系：
 
-80% list size=1 list  基于这样的假设       先实现-->优化（提取基类）
+![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/lifecycle_livedata_relationship.png)  
 
-loadsir-->view的错误处理
+## 四、项目优化
 
-预加载 耗费时间 不希望用
+### 4.1 启动白屏问题优化
 
-懒加载 网络请求少 提升速度  androidx  setMaxLifecycle  onStart onCreate onResume
+加入一个`SplashActivity`作为启动页，主题设置为一个带启动图背景图片的样式。
 
-组件化的难点：迁移、老工程迁移到组件化、历史代码的迁移
+`SplashActivity`:
 
-SplashActivity:
+```java
+public class SplashActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        startActivity(new Intent(this, MainActivity.class));
+    }
 
-splash(带背景)        MainActivity   newsDetailActivity
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
+}
+```
 
-onStop	                 onResume       体验优先原则
+`AndroidManifest.xml`:
 
-onPause(数据保存)   onCreate         安全第一原则
+```xml
+<activity
+          android:name=".SplashActivity"
+          android:theme="@style/SplashTheme">
+  <intent-filter>
+    <action android:name="android.intent.action.MAIN" />
+
+    <category android:name="android.intent.category.LAUNCHER" />
+  </intent-filter>
+</activity>
+```
+
+`style.xml`:
+
+```xml
+<style name="SplashTheme" parent="AppTheme">
+  <item name="android:windowFullscreen">true</item>
+  <item name="android:background">@drawable/theme_background</item>
+</style>
+```
+
+| `SplashActivity`(带背景) | `MainActivity` | `NewsDetailActivity` |
+| ------------------------ | -------------- | -------------------- |
+| `onStop`                 | `onResume`     | 体验优先原则         |
+| `onPause`(数据保存)      | `onCreate`     | 安全第一原则         |
+
+### 4.2 其它优化
+
+* 预加载 耗费时间 不希望用
+
+* 懒加载 网络请求少 提升速度  androidx  setMaxLifecycle  onStart onCreate onResume
+
