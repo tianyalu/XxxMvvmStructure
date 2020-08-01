@@ -218,7 +218,7 @@ CLEARTEXT communication to service-o5ikp40z-1255468759.ap-shanghai.apigateway.my
 
 ![image](https://github.com/tianyalu/XxxMvvmStructure/raw/master/show/mvvm_structure.png)  
 
-3. 内容优化（启动优化）
+## 四、项目优化（启动优化）
 
 Lifecycle owner model
 

@@ -177,7 +177,7 @@ public abstract class MvvmBaseModel<F, T extends ArrayList> implements MvvmNetwo
     /**
      * 发消息给UI线程
      */
-    protected void loadSuccess(F networkResonseBean, T data, boolean isFromCache) {
+    protected void loadSuccess(F networkResponseBean, T data, boolean isFromCache) {
         synchronized (this) {
             for (WeakReference<IBaseModelListener> weakListener : mWeakListenerArrayList) {
                 if (weakListener.get() instanceof IBaseModelListener) {
@@ -188,7 +188,7 @@ public abstract class MvvmBaseModel<F, T extends ArrayList> implements MvvmNetwo
                                     isFromCache? new PagingResult(false, true, true) :
                                             new PagingResult(data.isEmpty(), isRefresh, data.size() > 0));
                             if(mCachedPreferenceKey != null && isRefresh && !isFromCache) {
-                                saveDataToPreference(networkResonseBean);
+                                saveDataToPreference(networkResponseBean);
                             }
                             if(!isFromCache) {
                                 pageNumber ++;
@@ -196,7 +196,7 @@ public abstract class MvvmBaseModel<F, T extends ArrayList> implements MvvmNetwo
                         } else {
                             listenerItem.onLoadFinish(this, data);
                             if(mCachedPreferenceKey != null) {
-                                saveDataToPreference(networkResonseBean);
+                                saveDataToPreference(networkResponseBean);
                             }
                         }
                     }

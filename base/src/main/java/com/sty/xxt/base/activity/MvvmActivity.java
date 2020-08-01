@@ -33,8 +33,8 @@ public abstract class MvvmActivity<V extends ViewDataBinding, VM extends MvvmBas
         super.onCreate(savedInstanceState);
         initViewModel();
         performDataBinding();
-        if(viewModel != null)
-        getLifecycle().addObserver(viewModel);
+        if (viewModel != null)
+            getLifecycle().addObserver(viewModel);
     }
 
     private void initViewModel() {
@@ -57,8 +57,7 @@ public abstract class MvvmActivity<V extends ViewDataBinding, VM extends MvvmBas
 
     public abstract int getBindingVariable();
 
-    public abstract
-    @LayoutRes
+    public abstract @LayoutRes
     int getLayoutId();
 
     private void performDataBinding() {
